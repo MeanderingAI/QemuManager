@@ -1,0 +1,100 @@
+name: Release QemuManager
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Extract version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Update version in pom.xml
+      run: |
+        mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
+        mvn versions:commit
+        
+    - name: Run tests
+      run: mvn clean test
+      
+    - name: Build JAR with dependencies
+      run: mvn clean package
+      
+    - name: Build executable JAR
+      run: mvn clean package -P dist
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: QemuManager ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          ## QemuManager Release ${{ steps.get_version.outputs.VERSION }}
+          
+          ### Downloads
+          - **QemuManager-${{ steps.get_version.outputs.VERSION }}.jar**: Main application JAR
+          - **QemuManager-${{ steps.get_version.outputs.VERSION }}-executable.jar**: Standalone executable JAR with all dependencies
+          
+          ### Features
+          - QEMU virtual machine management
+          - Disk image management with large action buttons
+          - VNC integration for remote VM access
+          - Configurable paths (.QemuManager directory structure)
+          - Persistent VM state management
+          
+          ### Requirements
+          - Java 11 or higher
+          - QEMU installed on your system
+          - VNC viewer (optional, for VM display access)
+          
+          ### Installation
+          1. Download the JAR file
+          2. Run with: `java -jar QemuManager-${{ steps.get_version.outputs.VERSION }}.jar`
+          
+        draft: false
+        prerelease: false
+        
+    - name: Upload Main JAR
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/QemuManager-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_name: QemuManager-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_content_type: application/java-archive
+        
+    - name: Upload Executable JAR (if exists)
+      continue-on-error: true
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/QemuManager-${{ steps.get_version.outputs.VERSION }}-jar-with-dependencies.jar
+        asset_name: QemuManager-${{ steps.get_version.outputs.VERSION }}-executable.jar
+        asset_content_type: application/java-archive

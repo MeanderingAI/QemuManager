@@ -1,5 +1,8 @@
 # QEMU Manager
 
+[![Build QemuManager](https://github.com/mehran/QemuManager/actions/workflows/build.yml/badge.svg)](https://github.com/mehran/QemuManager/actions/workflows/build.yml)
+[![Release QemuManager](https://github.com/mehran/QemuManager/actions/workflows/release.yml/badge.svg)](https://github.com/mehran/QemuManager/actions/workflows/release.yml)
+
 A Java-based GUI application for managing QEMU virtual machines with an intuitive interface.
 
 ## Features
@@ -14,6 +17,21 @@ A Java-based GUI application for managing QEMU virtual machines with an intuitiv
 - **Console Output**: Real-time monitoring of VM output and logs
 - **VNC Support**: Connect to running VMs via VNC viewer
 - **Cross-platform**: Runs on Linux, macOS, and Windows
+
+## Download
+
+### Latest Release
+Download the latest pre-built JAR from the [Releases page](https://github.com/mehran/QemuManager/releases).
+
+**Two options available:**
+- **QemuManager-X.X.X.jar**: Standard JAR (requires dependencies)
+- **QemuManager-X.X.X-executable.jar**: Standalone executable with all dependencies included
+
+### Quick Start
+```bash
+# Download and run (replace X.X.X with latest version)
+java -jar QemuManager-X.X.X-executable.jar
+```
 
 ## Requirements
 
