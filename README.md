@@ -1,7 +1,7 @@
 # QEMU Manager
 
-[![Build QemuManager](https://github.com/mehran/QemuManager/actions/workflows/build.yml/badge.svg)](https://github.com/mehran/QemuManager/actions/workflows/build.yml)
-[![Release QemuManager](https://github.com/mehran/QemuManager/actions/workflows/release.yml/badge.svg)](https://github.com/mehran/QemuManager/actions/workflows/release.yml)
+[![Build QemuManager](https://github.com/MeanderingAI/QemuManager/actions/workflows/build.yml/badge.svg)](https://github.com/MeanderingAI/QemuManager/actions/workflows/build.yml)
+[![Release QemuManager](https://github.com/MeanderingAI/QemuManager/actions/workflows/release.yml/badge.svg)](https://github.com/MeanderingAI/QemuManager/actions/workflows/release.yml)
 
 A Java-based GUI application for managing QEMU virtual machines with an intuitive interface.
 
@@ -21,7 +21,7 @@ A Java-based GUI application for managing QEMU virtual machines with an intuitiv
 ## Download
 
 ### Latest Release
-Download the latest pre-built JAR from the [Releases page](https://github.com/mehran/QemuManager/releases).
+Download the latest pre-built JAR from the [Releases page](https://github.com/MeanderingAI/QemuManager/releases).
 
 **Two options available:**
 - **QemuManager-X.X.X.jar**: Standard JAR (requires dependencies)

@@ -23,7 +23,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Cache Maven dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -36,19 +36,8 @@ jobs:
       run: mvn clean package -DskipTests
       
     - name: Upload JAR artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: qemu-manager-jar
         path: target/*.jar
         retention-days: 30
-        
-    - name: Upload JAR to release (on release)
-      if: github.event_name == 'release'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: target/QemuManager-1.0-SNAPSHOT.jar
-        asset_name: QemuManager-${{ github.event.release.tag_name }}.jar
-        asset_content_type: application/java-archive

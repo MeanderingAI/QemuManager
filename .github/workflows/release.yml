@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Cache Maven dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -44,14 +44,10 @@ jobs:
     - name: Build executable JAR
       run: mvn clean package -P dist
       
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release with Assets
+      uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
-        release_name: QemuManager ${{ steps.get_version.outputs.VERSION }}
+        name: QemuManager ${{ steps.get_version.outputs.VERSION }}
         body: |
           ## QemuManager Release ${{ steps.get_version.outputs.VERSION }}
           
@@ -75,26 +71,8 @@ jobs:
           1. Download the JAR file
           2. Run with: `java -jar QemuManager-${{ steps.get_version.outputs.VERSION }}.jar`
           
+        files: |
+          target/qemu-manager-${{ steps.get_version.outputs.VERSION }}.jar
+          target/qemu-manager-${{ steps.get_version.outputs.VERSION }}-jar-with-dependencies.jar
         draft: false
         prerelease: false
-        
-    - name: Upload Main JAR
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/QemuManager-${{ steps.get_version.outputs.VERSION }}.jar
-        asset_name: QemuManager-${{ steps.get_version.outputs.VERSION }}.jar
-        asset_content_type: application/java-archive
-        
-    - name: Upload Executable JAR (if exists)
-      continue-on-error: true
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/QemuManager-${{ steps.get_version.outputs.VERSION }}-jar-with-dependencies.jar
-        asset_name: QemuManager-${{ steps.get_version.outputs.VERSION }}-executable.jar
-        asset_content_type: application/java-archive
