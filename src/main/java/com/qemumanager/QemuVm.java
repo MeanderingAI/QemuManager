@@ -190,6 +190,11 @@ public class QemuVm {
         // KVM acceleration
         if (enableKvm) {
             command.add("-enable-kvm");
+            command.add("-cpu");
+            command.add("host"); // Use host CPU features for better performance
+        } else {
+            command.add("-cpu");
+            command.add("qemu64"); // Generic CPU for compatibility
         }
         
         // Disk
@@ -217,6 +222,15 @@ public class QemuVm {
         // VNC display
         command.add("-vnc");
         command.add(":" + (vncPort - 5900)); // VNC display number (port - 5900)
+        
+        // Graphics acceleration and display
+        command.add("-vga");
+        command.add("std"); // Standard VGA adapter (compatible with most OS)
+        
+        // USB support for better device compatibility
+        command.add("-usb");
+        command.add("-device");
+        command.add("usb-tablet"); // Better mouse integration
         
         // Monitor
         command.add("-monitor");

@@ -259,6 +259,12 @@ public class QemuVmPanel extends JPanel {
             refreshTable();
             
             String[] command = vm.generateQemuCommand();
+            
+            if (consolePanel != null) {
+                consolePanel.appendMessage("Starting VM: " + vm.getName());
+                consolePanel.appendMessage("QEMU Command: " + String.join(" ", command));
+            }
+            
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.redirectErrorStream(true);
             
@@ -277,12 +283,15 @@ public class QemuVmPanel extends JPanel {
             vm.setStatus(QemuVm.VmStatus.STOPPED);
             refreshTable();
             
-            JOptionPane.showMessageDialog(this, 
-                "Failed to start virtual machine: " + e.getMessage(),
-                "Start Error", JOptionPane.ERROR_MESSAGE);
+            String errorMsg = "Failed to start virtual machine: " + e.getMessage();
+            JOptionPane.showMessageDialog(this, errorMsg, "Start Error", JOptionPane.ERROR_MESSAGE);
             
             if (consolePanel != null) {
-                consolePanel.appendMessage("Failed to start VM " + vm.getName() + ": " + e.getMessage());
+                consolePanel.appendMessage("ERROR: Failed to start VM " + vm.getName());
+                consolePanel.appendMessage("Error details: " + e.getMessage());
+                if (e.getCause() != null) {
+                    consolePanel.appendMessage("Cause: " + e.getCause().getMessage());
+                }
             }
         }
     }
